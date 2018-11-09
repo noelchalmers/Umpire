@@ -12,10 +12,24 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+set (resource_manager_tests_depends
+  umpire gtest)
+set (allocator_tests_depends
+  umpire gtest gmock)
+
+if (ENABLE_HIP)
+  set (resource_manager_tests_depends
+    ${resource_manager_tests_depends}
+    hip)
+  set (allocator_tests_depends
+    ${allocator_tests_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME resource_manager_tests
   SOURCES resource_manager_tests.cpp
-  DEPENDS_ON umpire gtest)
+  DEPENDS_ON ${resource_manager_tests_depends})
 
 blt_add_test(
   NAME resource_manager_tests
@@ -25,7 +39,7 @@ blt_add_executable(
   NAME allocator_tests
   SOURCES allocator_tests.cpp
   OUTPUT_DIR ${UMPIRE_TEST_OUTPUT_DIR}
-  DEPENDS_ON umpire gtest gmock)
+  DEPENDS_ON ${allocator_tests_depends})
 
 blt_add_test(
   NAME allocator_tests

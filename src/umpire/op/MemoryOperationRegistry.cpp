@@ -34,6 +34,14 @@
 #include "umpire/op/CudaAdviseReadMostlyOperation.hpp"
 #endif
 
+#if defined(UMPIRE_ENABLE_HIP)
+#include "umpire/op/HipCopyFromOperation.hpp"
+#include "umpire/op/HipCopyToOperation.hpp"
+#include "umpire/op/HipCopyOperation.hpp"
+
+#include "umpire/op/HipMemsetOperation.hpp"
+#endif
+
 #include "umpire/util/Macros.hpp"
 
 namespace umpire {
@@ -115,6 +123,34 @@ MemoryOperationRegistry::MemoryOperationRegistry()
       "READ_MOSTLY",
       std::make_pair(Platform::cuda, Platform::cuda),
       std::make_shared<CudaAdviseReadMostlyOperation>());
+
+#endif
+
+#if defined(UMPIRE_ENABLE_HIP)
+  registerOperation(
+      "COPY",
+      std::make_pair(Platform::cpu, Platform::hip),
+      std::make_shared<HipCopyToOperation>());
+
+  registerOperation(
+      "COPY",
+      std::make_pair(Platform::hip, Platform::cpu),
+      std::make_shared<HipCopyFromOperation>());
+
+  registerOperation(
+      "COPY",
+      std::make_pair(Platform::hip, Platform::hip),
+      std::make_shared<HipCopyOperation>());
+
+  registerOperation(
+      "MEMSET",
+      std::make_pair(Platform::hip, Platform::hip),
+      std::make_shared<HipMemsetOperation>());
+
+  registerOperation(
+      "REALLOCATE",
+      std::make_pair(Platform::hip, Platform::hip),
+      std::make_shared<GenericReallocateOperation>());
 
 #endif
 }

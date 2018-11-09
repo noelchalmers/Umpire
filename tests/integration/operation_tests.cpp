@@ -26,6 +26,10 @@
 #include <cuda_runtime_api.h>
 #endif
 
+#if defined(UMPIRE_ENABLE_HIP)
+#include <hip/hip_runtime.h>
+#endif
+
 class OperationTest : 
   public ::testing::TestWithParam< ::testing::tuple<std::string, std::string> >
 {
@@ -122,6 +126,9 @@ const std::string copy_sources[] = {
   , "UM"
   , "PINNED"
 #endif
+#if defined(UMPIRE_ENABLE_HIP)
+  , "PINNED"
+#endif
 };
 
 const std::string copy_dests[] = {
@@ -129,6 +136,10 @@ const std::string copy_dests[] = {
 #if defined(UMPIRE_ENABLE_CUDA)
     , "DEVICE"
     , "UM"
+    , "PINNED"
+#endif
+#if defined(UMPIRE_ENABLE_HIP)
+    , "DEVICE"
     , "PINNED"
 #endif
 };
@@ -182,6 +193,10 @@ const std::string memset_sources[] = {
 #if defined(UMPIRE_ENABLE_CUDA)
   , "DEVICE"
   , "UM"
+  , "PINNED"
+#endif
+#if defined(UMPIRE_ENABLE_HIP)
+  , "DEVICE"
   , "PINNED"
 #endif
 };
@@ -340,6 +355,10 @@ const std::string reallocate_sources[] = {
   , "DEVICE"
   , "PINNED"
 #endif
+#if defined(UMPIRE_ENABLE_HIP)
+  , "DEVICE"
+  , "PINNED"
+#endif
 };
 
 const std::string reallocate_dests[] = {
@@ -391,6 +410,9 @@ const std::string move_sources[] = {
   , "UM"
   , "PINNED"
 #endif
+#if defined(UMPIRE_ENABLE_HIP)
+  , "PINNED"
+#endif
 };
 
 const std::string move_dests[] = {
@@ -398,6 +420,10 @@ const std::string move_dests[] = {
 #if defined(UMPIRE_ENABLE_CUDA)
   , "DEVICE"
   , "UM"
+  , "PINNED"
+#endif
+#if defined(UMPIRE_ENABLE_HIP)
+  , "DEVICE"
   , "PINNED"
 #endif
 };

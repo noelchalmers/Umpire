@@ -32,6 +32,15 @@ if (ENABLE_CUDA)
     CudaMemsetOperation.hpp)
 endif ()
 
+if (ENABLE_HIP)
+  set (umpire_op_headers
+    ${umpire_op_headers}
+    HipCopyOperation.hpp
+    HipCopyFromOperation.hpp
+    HipCopyToOperation.hpp
+    HipMemsetOperation.hpp)
+endif ()
+
 set (umpire_op_sources
   GenericReallocateOperation.cpp
   HostCopyOperation.cpp
@@ -52,6 +61,15 @@ if (ENABLE_CUDA)
     CudaMemsetOperation.cpp)
 endif ()
 
+if (ENABLE_HIP)
+  set (umpire_op_sources
+    ${umpire_op_sources}
+    HipCopyOperation.cpp
+    HipCopyFromOperation.cpp
+    HipCopyToOperation.cpp
+    HipMemsetOperation.cpp)
+endif ()
+
 set (umpire_op_depends
   umpire_util)
 
@@ -59,6 +77,12 @@ if (ENABLE_CUDA)
   set (umpire_op_depends
     ${umpire_op_depends}
     cuda_runtime)
+endif ()
+
+if (ENABLE_HIP)
+  set (umpire_op_depends
+    ${umpire_op_depends}
+    hip)
 endif ()
 
 blt_add_library(

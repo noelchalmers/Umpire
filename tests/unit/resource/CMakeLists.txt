@@ -12,10 +12,19 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+set (resource_tests_depends
+  umpire_resource umpire_util umpire gtest gmock)
+
+if (ENABLE_HIP)
+  set (resource_tests_depends
+    ${resource_tests_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME resource_tests
   SOURCES resource_tests.cpp
-  DEPENDS_ON umpire_resource umpire_util umpire gtest gmock)
+  DEPENDS_ON ${resource_tests_depends})
 
 blt_add_test(
   NAME resource_tests

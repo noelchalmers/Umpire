@@ -24,6 +24,10 @@
 #include "umpire/resource/UnifiedMemoryResourceFactory.hpp"
 #include "umpire/resource/PinnedMemoryResourceFactory.hpp"
 #endif
+#if defined(UMPIRE_ENABLE_HIP)
+#include "umpire/resource/DeviceResourceFactory.hpp"
+#include "umpire/resource/PinnedMemoryResourceFactory.hpp"
+#endif
 #include "umpire/op/MemoryOperationRegistry.hpp"
 
 #include "umpire/util/Macros.hpp"
@@ -70,6 +74,13 @@ ResourceManager::ResourceManager() :
   registry.registerMemoryResource(
     std::make_shared<resource::PinnedMemoryResourceFactory>());
 #endif
+#if defined(UMPIRE_ENABLE_HIP)
+  registry.registerMemoryResource(
+    std::make_shared<resource::DeviceResourceFactory>());
+
+  registry.registerMemoryResource(
+    std::make_shared<resource::PinnedMemoryResourceFactory>());
+#endif
 
   initialize();
   UMPIRE_LOG(Debug, "() leaving");
@@ -87,6 +98,10 @@ ResourceManager::initialize()
 #if defined(UMPIRE_ENABLE_CUDA)
   m_memory_resources[resource::Device] = registry.makeMemoryResource("DEVICE", getNextId());
   m_memory_resources[resource::UnifiedMemory] = registry.makeMemoryResource("UM", getNextId());
+  m_memory_resources[resource::PinnedMemory] = registry.makeMemoryResource("PINNED", getNextId());
+#endif
+#if defined(UMPIRE_ENABLE_HIP)
+  m_memory_resources[resource::Device] = registry.makeMemoryResource("DEVICE", getNextId());
   m_memory_resources[resource::PinnedMemory] = registry.makeMemoryResource("PINNED", getNextId());
 #endif
 
@@ -114,6 +129,22 @@ ResourceManager::initialize()
   auto um_allocator = m_memory_resources[resource::UnifiedMemory];
   m_allocators_by_name["UM"] = um_allocator;
   m_allocators_by_id[um_allocator->getId()] = um_allocator;
+
+  auto pinned_allocator = m_memory_resources[resource::PinnedMemory];
+  m_allocators_by_name["PINNED"] = pinned_allocator;
+  m_allocators_by_id[pinned_allocator->getId()] = pinned_allocator;
+#endif
+#if defined(UMPIRE_ENABLE_HIP)
+  /*
+   *  strategy::AllocationStrategyRegistry& strategy_registry =
+   *    strategy::AllocationStrategyRegistry::getInstance();
+   *
+   *  m_allocators_by_name["DEVICE"] = strategy_registry.makeAllocationStrategy("POOL", {}, {m_memory_resources["DEVICE"]});
+   */
+
+  auto device_allocator = m_memory_resources[resource::Device];
+  m_allocators_by_name["DEVICE"] = device_allocator;
+  m_allocators_by_id[device_allocator->getId()] = device_allocator;
 
   auto pinned_allocator = m_memory_resources[resource::PinnedMemory];
   m_allocators_by_name["PINNED"] = pinned_allocator;

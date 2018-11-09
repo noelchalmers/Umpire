@@ -74,7 +74,7 @@ TEST(Allocator, HostAllocatorSize)
   ASSERT_ANY_THROW(allocator.getSize(test_alloc));
 }
 
-#if defined(UMPIRE_ENABLE_CUDA)
+#if defined(UMPIRE_ENABLE_CUDA) || defined(UMPIRE_ENABLE_HIP)
 TEST(Allocator, DeviceAllocator)
 {
   auto &rm = umpire::ResourceManager::getInstance();
@@ -114,7 +114,9 @@ TEST(Allocator, DeviceAllocatorSize)
 
   ASSERT_ANY_THROW(allocator.getSize(test_alloc));
 }
+#endif
 
+#if defined(UMPIRE_ENABLE_CUDA)
 TEST(Allocator, UmAllocator)
 {
   auto &rm = umpire::ResourceManager::getInstance();
@@ -154,7 +156,9 @@ TEST(Allocator, UmAllocatorSize)
 
   ASSERT_ANY_THROW(allocator.getSize(test_alloc));
 }
+#endif
 
+#if defined(UMPIRE_ENABLE_CUDA) || defined(UMPIRE_ENABLE_HIP)
 TEST(Allocator, PinnedAllocator)
 {
   auto &rm = umpire::ResourceManager::getInstance();
@@ -243,7 +247,7 @@ TEST(Allocator, Id)
       umpire::util::Exception);
 }
 
-#if defined(UMPIRE_ENABLE_CUDA)
+#if defined(UMPIRE_ENABLE_CUDA) || defined(UMPIRE_ENABLE_HIP)
 TEST(Allocator, IdUnique)
 {
   auto& rm = umpire::ResourceManager::getInstance();

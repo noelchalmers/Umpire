@@ -23,6 +23,10 @@ using namespace umpire::alloc;
 #include "umpire/alloc/CudaMallocManagedAllocator.hpp"
 #include "umpire/alloc/CudaPinnedAllocator.hpp"
 #endif
+#if defined(UMPIRE_ENABLE_HIP)
+#include "umpire/alloc/HipMallocAllocator.hpp"
+#include "umpire/alloc/HipPinnedAllocator.hpp"
+#endif
 
 #include "gtest/gtest.h"
 
@@ -46,6 +50,8 @@ REGISTER_TYPED_TEST_CASE_P(
 
 #if defined(UMPIRE_ENABLE_CUDA)
 using test_types = ::testing::Types<MallocAllocator, CudaMallocAllocator, CudaMallocManagedAllocator, CudaPinnedAllocator>;
+#elif defined(UMPIRE_ENABLE_HIP)
+using test_types = ::testing::Types<MallocAllocator, HipMallocAllocator, HipPinnedAllocator>;
 #else
 using test_types = ::testing::Types<MallocAllocator>;
 #endif

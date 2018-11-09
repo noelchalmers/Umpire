@@ -56,6 +56,7 @@ blt_add_library(
   DEPENDS_ON umpire_resource umpire_strategy umpire_alloc umpire_op)
 
 set(UMPIRE_ENABLE_CUDA ${ENABLE_CUDA})
+set(UMPIRE_ENABLE_HIP ${ENABLE_HIP})
 set(UMPIRE_ENABLE_LOGGING ${ENABLE_LOGGING})
 set(UMPIRE_ENABLE_SLIC ${ENABLE_SLIC})
 set(UMPIRE_ENABLE_ASSERTS ${ENABLE_ASSERTS})

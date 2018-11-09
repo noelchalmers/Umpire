@@ -19,7 +19,8 @@ namespace umpire {
 
 enum class Platform {
   cpu,
-  cuda
+  cuda,
+  hip
 };
 
 } // end of namespace umpire

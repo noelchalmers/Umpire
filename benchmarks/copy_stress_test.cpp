@@ -66,4 +66,10 @@ int main(int, char**) {
   do_copy("UM", "DEVICE");
   do_copy("DEVICE", "UM");
 #endif
+
+#if defined(UMPIRE_ENABLE_HIP)
+  do_copy("HOST", "DEVICE");
+  do_copy("DEVICE", "HOST");
+  do_copy("DEVICE", "DEVICE");
+#endif
 }

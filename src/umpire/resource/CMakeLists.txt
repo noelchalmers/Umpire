@@ -49,6 +49,22 @@ if (ENABLE_CUDA)
     cuda_runtime)
 endif ()
 
+if (ENABLE_HIP)
+  set (umpire_resource_headers
+    ${umpire_resource_headers}
+    DeviceResourceFactory.hpp
+    PinnedMemoryResourceFactory.hpp)
+
+  set (umpire_resource_sources
+    ${umpire_resource_sources}
+    DeviceResourceFactory.cpp
+    PinnedMemoryResourceFactory.cpp)
+
+  set(umpire_resource_depends
+    ${umpire_resource_depends}
+    hip)
+endif ()
+
 blt_add_library(
   NAME umpire_resource
   HEADERS ${umpire_resource_headers}
