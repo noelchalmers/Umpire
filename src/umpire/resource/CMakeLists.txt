@@ -60,20 +60,30 @@ if (ENABLE_CUDA)
     cuda_runtime)
 endif ()
 
-if (ENABLE_ROCM)
+if (ENABLE_HIP)
   set (umpire_resource_headers
     ${umpire_resource_headers}
-    RocmDeviceResourceFactory.hpp
-    RocmPinnedMemoryResourceFactory.hpp)
+    HipDeviceResourceFactory.hpp
+    HipPinnedMemoryResourceFactory.hpp
+
+    HipConstantMemoryResourceFactory.hpp
+    HipConstantMemoryResource.hpp
+    )
 
   set (umpire_resource_sources
     ${umpire_resource_sources}
-    RocmDeviceResourceFactory.cpp
-    RocmPinnedMemoryResourceFactory.cpp)
 
-  set (umpire_resource_depends
+
+    HipConstantMemoryResourceFactory.cpp
+    HipConstantMemoryResource.cpp
+
+    HipDeviceResourceFactory.cpp
+    HipPinnedMemoryResourceFactory.cpp)
+
+
+  set(umpire_resource_depends
     ${umpire_resource_depends}
-    rocm)
+    hip)
 endif ()
 
 blt_add_library(

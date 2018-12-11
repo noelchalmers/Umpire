@@ -14,10 +14,19 @@
 ##############################################################################
 
 if (ENABLE_C_API)
+  set (c_tests_depends
+    umpire gtest)
+
+  if (ENABLE_HIP)
+    set (c_tests_depends
+      ${c_tests_depends}
+      hip)
+  endif ()
+
   blt_add_executable(
     NAME allocator_c_tests
     SOURCES allocator_c_tests.cpp
-    DEPENDS_ON umpire gtest
+    DEPENDS_ON ${c_tests_depends}
     OUTPUT_DIR ${UMPIRE_TEST_OUTPUT_DIR})
 
   target_include_directories(
@@ -32,7 +41,7 @@ if (ENABLE_C_API)
   blt_add_executable(
     NAME operation_c_tests
     SOURCES operation_c_tests.cpp
-    DEPENDS_ON umpire gtest
+    DEPENDS_ON ${c_tests_depends}
     OUTPUT_DIR ${UMPIRE_TEST_OUTPUT_DIR})
 
   target_include_directories(
@@ -45,10 +54,19 @@ if (ENABLE_C_API)
     COMMAND operation_c_tests)
 
   if (ENABLE_FORTRAN_API)
+    set (fortran_interface_tests_depends
+      fruit umpire)
+
+    if (ENABLE_HIP)
+      set (fortran_interface_tests_depends
+        ${fortran_interface_tests_depends}
+        hip)
+    endif ()
+
     blt_add_executable(
       NAME fortran_interface_tests
       SOURCES umpire_fortran_interface.f
-      DEPENDS_ON fruit umpire
+      DEPENDS_ON ${fortran_interface_tests_depends}
     )
 
     set_source_files_properties(

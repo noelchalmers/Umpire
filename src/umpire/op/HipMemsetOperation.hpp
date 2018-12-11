@@ -12,8 +12,8 @@
 // For details, see https://github.com/LLNL/Umpire
 // Please also see the LICENSE file for MIT license.
 //////////////////////////////////////////////////////////////////////////////
-#ifndef UMPIRE_RocmCopyOperation_HPP
-#define UMPIRE_RocmCopyOperation_HPP
+#ifndef UMPIRE_HipMemsetOperation_HPP
+#define UMPIRE_HipMemsetOperation_HPP
 
 #include "umpire/op/MemoryOperation.hpp"
 
@@ -21,27 +21,25 @@ namespace umpire {
 namespace op {
 
 /*!
- * \brief Copy operation to move data between two GPU addresses.
+ * \brief Memset on AMD device memory.
  */
-class RocmCopyOperation : public MemoryOperation {
+class HipMemsetOperation : public MemoryOperation {
  public:
    /*!
-    * @copybrief MemoryOperation::transform
+    * @copybrief MemoryOperation::apply
     *
-    * Uses hc::accelerator_view::copy  to move data when either src_ptr  and
-    * dst_ptr are on AMD GPUs.
+    * Uses hipMemset to set first length bytes of src_ptr to value.
     *
-    * @copydetails MemoryOperation::transform
+    * @copydetails MemoryOperation::apply
     */
-  void transform(
+  void apply(
       void* src_ptr,
-      void** dst_ptr,
-      umpire::util::AllocationRecord *src_allocation,
-      umpire::util::AllocationRecord *dst_allocation,
+      util::AllocationRecord* ptr,
+      int value,
       size_t length);
 };
 
-} // end of namespace op
-} // end of namespace umpire
+} // end of naemspace op
+} //end of namespace umpire
 
-#endif // UMPIRE_RocmCopyOperation_HPP
+#endif // UMPIRE_HipMemsetOperation_HPP

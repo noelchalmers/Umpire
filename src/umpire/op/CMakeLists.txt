@@ -57,22 +57,25 @@ if (ENABLE_CUDA)
     cuda_runtime)
 endif ()
 
-if (ENABLE_ROCM)
+if (ENABLE_HIP)
   set (umpire_op_headers
     ${umpire_op_headers}
-    RocmCopyOperation.hpp
-    RocmMemsetOperation.hpp)
+    HipCopyOperation.hpp
+    HipCopyFromOperation.hpp
+    HipCopyToOperation.hpp
+    HipMemsetOperation.hpp)
 
   set (umpire_op_sources
     ${umpire_op_sources}
-    RocmCopyOperation.cpp
-    RocmMemsetOperation.cpp)
+    HipCopyOperation.cpp
+    HipCopyFromOperation.cpp
+    HipCopyToOperation.cpp
+    HipMemsetOperation.cpp)
 
   set (umpire_op_depends
     ${umpire_op_depends}
-    rocm)
+    hip)
 endif ()
-
 
 blt_add_library(
   NAME umpire_op

@@ -20,7 +20,11 @@
 #include <cuda_runtime_api.h>
 #endif
 
-class OperationTest : 
+#if defined(UMPIRE_ENABLE_HIP)
+#include <hip/hip_runtime.h>
+#endif
+
+class OperationTest :
   public ::testing::TestWithParam< ::testing::tuple<const char*, const char*> >
 {
   public:
@@ -124,7 +128,7 @@ const char* copy_dests[] = {
     , "PINNED"
 #endif
 };
-    
+
 
 INSTANTIATE_TEST_CASE_P(
     Copies,
@@ -191,7 +195,7 @@ TEST_P(ReallocateTest, Reallocate)
 
   umpire_resourcemanager_memset_all(&rm, source_array, 0);
 
-  float* reallocated_array = 
+  float* reallocated_array =
     (float*) umpire_resourcemanager_reallocate(&rm, source_array, reallocated_size*sizeof(float));
 
   ASSERT_EQ(
@@ -216,14 +220,14 @@ TEST_P(ReallocateTest, ReallocateLarger)
 
   umpire_resourcemanager_memset_all(&rm, source_array, 0);
 
-  float* reallocated_array = 
+  float* reallocated_array =
     (float*) umpire_resourcemanager_reallocate(&rm, source_array, reallocated_size*sizeof(float));
 
   ASSERT_EQ(
       umpire_allocator_get_size(&source_allocator, reallocated_array),
       reallocated_size*sizeof(float));
 
-  float* reallocated_check_array = 
+  float* reallocated_check_array =
     (float*) umpire_resourcemanager_reallocate(&rm, check_array, reallocated_size*sizeof(float));
 
   umpire_resourcemanager_copy_with_size(&rm, reallocated_check_array, reallocated_array, reallocated_size*sizeof(float));
@@ -241,17 +245,17 @@ TEST_P(ReallocateTest, ReallocateLarger)
 // TEST_P(ReallocateTest, ReallocateWithAllocator)
 // {
 //   umpire::ResourceManager& rm = umpire::ResourceManager::getInstance();
-// 
+//
 //   const size_t reallocated_size = (m_size+50);
-// 
-//   float* reallocated_array = 
+//
+//   float* reallocated_array =
 //     static_cast<float*>(
 //         rm.reallocate(source_array, reallocated_size*sizeof(float), *source_allocator));
-// 
+//
 //   ASSERT_EQ(
-//       source_allocator->getSize(reallocated_array), 
+//       source_allocator->getSize(reallocated_array),
 //       reallocated_size*sizeof(float));
-// 
+//
 //   rm.deallocate(reallocated_array);
 //   source_array = nullptr;
 // }
@@ -285,33 +289,33 @@ INSTANTIATE_TEST_CASE_P(
 //   public OperationTest
 // {
 // };
-// 
+//
 // TEST_P(MoveTest, Move)
 // {
 //   auto& rm = umpire::ResourceManager::getInstance();
-// 
+//
 //   // this works because source should always be host!
 //   for (size_t i = 0; i < m_size; i++) {
 //     source_array[i] = i;
 //   }
-// 
+//
 //   float* moved_array = static_cast<float*>(rm.move(source_array, *dest_allocator));
-// 
-//   if ( dest_allocator->getAllocationStrategy() 
+//
+//   if ( dest_allocator->getAllocationStrategy()
 //       == source_allocator->getAllocationStrategy()) {
 //     ASSERT_EQ(moved_array, source_array);
 //   }
-// 
+//
 //   rm.copy(check_array, moved_array);
-// 
+//
 //   for (size_t i = 0; i < m_size; i++) {
 //     ASSERT_FLOAT_EQ(check_array[i], i);
 //   }
-// 
+//
 //   dest_allocator->deallocate(moved_array);
 //   source_array = nullptr;
 // }
-// 
+//
 // const std::string move_sources[] = {
 //   "HOST"
 // #if defined(UMPIRE_ENABLE_UM)
@@ -321,7 +325,7 @@ INSTANTIATE_TEST_CASE_P(
 //   , "PINNED"
 // #endif
 // };
-// 
+//
 // const std::string move_dests[] = {
 //   "HOST"
 // #if defined(UMPIRE_ENABLE_DEVICE)
@@ -334,7 +338,7 @@ INSTANTIATE_TEST_CASE_P(
 //   , "PINNED"
 // #endif
 // };
-// 
+//
 // INSTANTIATE_TEST_CASE_P(
 //     Move,
 //     MoveTest,
@@ -342,29 +346,29 @@ INSTANTIATE_TEST_CASE_P(
 //       ::testing::ValuesIn(move_sources),
 //       ::testing::ValuesIn(move_dests)
 // ));
-// 
+//
 // #if defined(UMPIRE_ENABLE_CUDA)
 // class AdviceTest :
 //   public OperationTest
 // {
 // };
-// 
+//
 // TEST_P(AdviceTest, ReadMostly)
 // {
 //   auto& op_registry = umpire::op::MemoryOperationRegistry::getInstance();
 //   auto strategy = source_allocator->getAllocationStrategy();
-// 
+//
 //   int device = 0;
-// 
+//
 //   auto m_advice_operation = op_registry.find(
 //       "READ_MOSTLY",
 //       strategy,
 //       strategy);
-// 
+//
 //   if (dest_allocator->getPlatform() == umpire::Platform::cpu) {
 //     device = cudaCpuDeviceId;
 //   }
-// 
+//
 //   ASSERT_NO_THROW({
 //       m_advice_operation->apply(
 //           source_array,
@@ -373,23 +377,23 @@ INSTANTIATE_TEST_CASE_P(
 //           m_size);
 //   });
 // }
-// 
+//
 // TEST_P(AdviceTest, PreferredLocation)
 // {
 //   auto& op_registry = umpire::op::MemoryOperationRegistry::getInstance();
 //   auto strategy = source_allocator->getAllocationStrategy();
-// 
+//
 //   int device = 0;
-// 
+//
 //   auto m_advice_operation = op_registry.find(
 //       "PREFERRED_LOCATION",
 //       strategy,
 //       strategy);
-// 
+//
 //   if (dest_allocator->getPlatform() == umpire::Platform::cpu) {
 //     device = cudaCpuDeviceId;
 //   }
-// 
+//
 //   ASSERT_NO_THROW({
 //       m_advice_operation->apply(
 //           source_array,
@@ -398,23 +402,23 @@ INSTANTIATE_TEST_CASE_P(
 //           m_size);
 //   });
 // }
-// 
+//
 // TEST_P(AdviceTest, AccessedBy)
 // {
 //   auto& op_registry = umpire::op::MemoryOperationRegistry::getInstance();
 //   auto strategy = source_allocator->getAllocationStrategy();
-// 
+//
 //   int device = 0;
-// 
+//
 //   auto m_advice_operation = op_registry.find(
 //       "ACCESSED_BY",
 //       strategy,
 //       strategy);
-// 
+//
 //   if (dest_allocator->getPlatform() == umpire::Platform::cpu) {
 //     device = cudaCpuDeviceId;
 //   }
-// 
+//
 //   ASSERT_NO_THROW({
 //       m_advice_operation->apply(
 //           source_array,
@@ -423,16 +427,16 @@ INSTANTIATE_TEST_CASE_P(
 //           m_size);
 //   });
 // }
-// 
+//
 // const std::string advice_sources[] = {
 //   "UM"
 // };
-// 
+//
 // const std::string advice_dests[] = {
 //   "HOST"
 //   , "DEVICE"
 // };
-// 
+//
 // INSTANTIATE_TEST_CASE_P(
 //     Advice,
 //     AdviceTest,
@@ -440,5 +444,5 @@ INSTANTIATE_TEST_CASE_P(
 //       ::testing::ValuesIn(advice_sources),
 //       ::testing::ValuesIn(advice_dests)
 // ));
-// 
+//
 // #endif

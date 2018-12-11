@@ -12,44 +12,52 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+set (example_depends umpire)
+
+if (ENABLE_HIP)
+  set (example_depends
+    ${example_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME malloc
   SOURCES malloc.cxx
-  DEPENDS_ON 
-    umpire)
+  DEPENDS_ON
+    ${example_depends})
 
 blt_add_executable(
   NAME strategy_example
   SOURCES strategy_example.cpp
   DEPENDS_ON
-    umpire)
+    ${example_depends})
 
 if (ENABLE_C_API)
   blt_add_executable(
     NAME allocator_c
     SOURCES allocator.c
     DEPENDS_ON
-      umpire
+      ${example_depends}
   )
 endif ()
 
 blt_add_executable(
   NAME vector_allocator
   SOURCES vector_allocator.cpp
-  DEPENDS_ON 
-    umpire)
+  DEPENDS_ON
+    ${example_depends})
 
 blt_add_executable(
   NAME size_limiter
   SOURCES size_limiter.cpp
-  DEPENDS_ON 
-    umpire)
+  DEPENDS_ON
+    ${example_depends})
 
 if (ENABLE_STATISTICS)
   blt_add_executable(
     NAME statistics_example
     SOURCES statistics.cpp
-    DEPENDS_ON umpire)
+    DEPENDS_ON ${example_depends})
 endif()
 
 add_subdirectory(tutorial)

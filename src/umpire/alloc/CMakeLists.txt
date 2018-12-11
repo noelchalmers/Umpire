@@ -27,10 +27,11 @@ if (ENABLE_CUDA)
     CudaPinnedAllocator.hpp)
 endif ()
 
-if (ENABLE_ROCM)
+if (ENABLE_HIP)
   set (umpire_alloc_headers
     ${umpire_alloc_headers}
-    AmAllocAllocator.hpp)
+    HipMallocAllocator.hpp
+    HipPinnedAllocator.hpp)
 endif ()
 
 blt_add_library(

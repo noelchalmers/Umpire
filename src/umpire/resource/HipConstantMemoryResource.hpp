@@ -12,28 +12,27 @@
 // For details, see https://github.com/LLNL/Umpire
 // Please also see the LICENSE file for MIT license.
 //////////////////////////////////////////////////////////////////////////////
-#ifndef UMPIRE_CudaConstantMemoryResource_HPP
-#define UMPIRE_CudaConstantMemoryResource_HPP
+#ifndef UMPIRE_HipConstantMemoryResource_HPP
+#define UMPIRE_HipConstantMemoryResource_HPP
 
 #include "umpire/resource/MemoryResource.hpp"
 
 #include "umpire/util/AllocationRecord.hpp"
 #include "umpire/util/Platform.hpp"
 
-#include <cuda_runtime_api.h>
+#include <hip/hip_runtime.h>
 
-#warning "TEST2"
-__constant__ char umpire_internal_device_constant_memory[64*1024];
+extern __constant__ char umpire_internal_device_constant_memory[64*1024];
 
 namespace umpire {
 namespace resource {
 
 
-class CudaConstantMemoryResource :
+class HipConstantMemoryResource :
   public MemoryResource
 {
   public:
-    CudaConstantMemoryResource(const std::string& name, int id, MemoryResourceTraits traits);
+    HipConstantMemoryResource(const std::string& name, int id, MemoryResourceTraits traits);
 
     void* allocate(size_t bytes);
     void deallocate(void* ptr);
@@ -56,4 +55,4 @@ class CudaConstantMemoryResource :
 } // end of namespace resource
 } // end of namespace umpire
 
-#endif // UMPIRE_CudaConstantMemoryResource_HPP
+#endif // UMPIRE_HipConstantMemoryResource_HPP

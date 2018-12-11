@@ -26,7 +26,11 @@
 #include <cuda_runtime_api.h>
 #endif
 
-class OperationTest : 
+#if defined(UMPIRE_ENABLE_HIP)
+#include <hip/hip_runtime.h>
+#endif
+
+class OperationTest :
   public ::testing::TestWithParam< ::testing::tuple<std::string, std::string> >
 {
   public:
@@ -138,7 +142,7 @@ const std::string copy_dests[] = {
     , "PINNED"
 #endif
 };
-    
+
 
 INSTANTIATE_TEST_CASE_P(
     Copies,
@@ -221,12 +225,12 @@ TEST_P(ReallocateTest, Reallocate)
 
   rm.memset(source_array, 0);
 
-  float* reallocated_array = 
+  float* reallocated_array =
     static_cast<float*>(
         rm.reallocate(source_array, reallocated_size*sizeof(float)));
 
   ASSERT_EQ(
-      source_allocator->getSize(reallocated_array), 
+      source_allocator->getSize(reallocated_array),
       reallocated_size*sizeof(float));
 
   rm.copy(check_array, reallocated_array, reallocated_size*sizeof(float));
@@ -246,20 +250,20 @@ TEST_P(ReallocateTest, ReallocateLarger)
 
   rm.memset(source_array, 0);
 
-  float* reallocated_array = 
+  float* reallocated_array =
     static_cast<float*>(
         rm.reallocate(source_array, reallocated_size*sizeof(float)));
 
   ASSERT_EQ(
-      source_allocator->getSize(reallocated_array), 
+      source_allocator->getSize(reallocated_array),
       reallocated_size*sizeof(float));
 
-  float* reallocated_check_array = 
+  float* reallocated_check_array =
     static_cast<float*>(
         rm.reallocate(check_array, reallocated_size*sizeof(float)));
 
-  rm.copy(reallocated_check_array, 
-      reallocated_array, 
+  rm.copy(reallocated_check_array,
+      reallocated_array,
       reallocated_size*sizeof(float));
 
   for (size_t i = 0; i < m_size; i++) {
@@ -281,12 +285,12 @@ TEST_P(ReallocateTest, RealocateNull)
 
   void* null_array = nullptr;
 
-  float* reallocated_array = 
+  float* reallocated_array =
     static_cast<float*>(
         rm.reallocate(null_array, reallocated_size*sizeof(float)));
 
   ASSERT_EQ(
-      source_allocator->getSize(reallocated_array), 
+      source_allocator->getSize(reallocated_array),
       reallocated_size*sizeof(float));
 
   rm.deallocate(reallocated_array);
@@ -301,12 +305,12 @@ TEST_P(ReallocateTest, ReallocateNullWithAllocator)
 
   void* null_array = nullptr;
 
-  float* reallocated_array = 
+  float* reallocated_array =
     static_cast<float*>(
         rm.reallocate(null_array, reallocated_size*sizeof(float), *source_allocator));
 
   ASSERT_EQ(
-      source_allocator->getSize(reallocated_array), 
+      source_allocator->getSize(reallocated_array),
       reallocated_size*sizeof(float));
 
   rm.deallocate(reallocated_array);
@@ -318,12 +322,12 @@ TEST_P(ReallocateTest, ReallocateWithAllocator)
 
   const size_t reallocated_size = (m_size+50);
 
-  float* reallocated_array = 
+  float* reallocated_array =
     static_cast<float*>(
         rm.reallocate(source_array, reallocated_size*sizeof(float), *source_allocator));
 
   ASSERT_EQ(
-      source_allocator->getSize(reallocated_array), 
+      source_allocator->getSize(reallocated_array),
       reallocated_size*sizeof(float));
 
   rm.deallocate(reallocated_array);
@@ -384,7 +388,7 @@ TEST_P(MoveTest, Move)
 
   float* moved_array = static_cast<float*>(rm.move(source_array, *dest_allocator));
 
-  if ( dest_allocator->getAllocationStrategy() 
+  if ( dest_allocator->getAllocationStrategy()
       == source_allocator->getAllocationStrategy()) {
     ASSERT_EQ(moved_array, source_array);
   }

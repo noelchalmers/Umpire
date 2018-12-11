@@ -12,8 +12,16 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+set (replay_depends
+  umpire)
+
+if (ENABLE_HIP)
+  set (replay_depends
+    ${replay_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME replay
   SOURCES replay.cpp
-  DEPENDS_ON 
-    umpire)
+  DEPENDS_ON ${replay_depends})

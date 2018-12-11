@@ -29,7 +29,7 @@ public:
   using ::benchmark::Fixture::SetUp;
   using ::benchmark::Fixture::TearDown;
 
-  allocatorBenchmark() : max_allocations(100000) { 
+  allocatorBenchmark() : max_allocations(100000) {
     allocations = new void*[max_allocations];
   }
   virtual ~allocatorBenchmark() {
@@ -279,6 +279,18 @@ BENCHMARK_REGISTER_F(FixedPoolDevice, allocate)->Arg(RangeLow);
 BENCHMARK_REGISTER_F(FixedPoolDevice, deallocate)->Arg(RangeLow);
 BENCHMARK_REGISTER_F(FixedPoolUM, allocate)->Arg(RangeLow);
 BENCHMARK_REGISTER_F(FixedPoolUM, deallocate)->Arg(RangeLow);
+#endif
+#endif
+
+#if defined(UMPIRE_ENABLE_HIP)
+BENCHMARK_REGISTER_F(Device, allocate)->Range(RangeLow, RangeHi);
+BENCHMARK_REGISTER_F(Device, deallocate)->Range(RangeLow, RangeHi);
+//BENCHMARK_REGISTER_F(PoolDevice, allocate)->Range(RangeLow, RangeHi);
+//BENCHMARK_REGISTER_F(PoolDevice, deallocate)->Range(RangeLow, RangeHi);
+// NOTE: always allocates 8mb, ignores size argument
+#if DOESNT_WORK_YET
+BENCHMARK_REGISTER_F(FixedPoolDevice, allocate)->Arg(RangeLow);
+BENCHMARK_REGISTER_F(FixedPoolDevice, deallocate)->Arg(RangeLow);
 #endif
 #endif
 

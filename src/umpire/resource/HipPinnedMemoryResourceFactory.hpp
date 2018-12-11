@@ -12,25 +12,22 @@
 // For details, see https://github.com/LLNL/Umpire
 // Please also see the LICENSE file for MIT license.
 //////////////////////////////////////////////////////////////////////////////
-#include "umpire/ResourceManager.hpp"
-#include "umpire/Allocator.hpp"
+#ifndef UMPIRE_HipPinnedMemoryResourceFactory_HPP
+#define UMPIRE_HipPinnedMemoryResourceFactory_HPP
 
-#include "umpire/TypedAllocator.hpp"
+#include "umpire/resource/MemoryResourceFactory.hpp"
 
-int main(int, char**) {
-  auto& rm = umpire::ResourceManager::getInstance();
-  auto alloc = rm.getAllocator("HOST");
+namespace umpire {
+namespace resource {
 
-  umpire::TypedAllocator<double> double_allocator(alloc);
+class HipPinnedMemoryResourceFactory :
+  public MemoryResourceFactory
+{
+  bool isValidMemoryResourceFor(const std::string& name) noexcept;
+  std::shared_ptr<MemoryResource> create(const std::string& name, int id);
+};
 
-  double* my_doubles = double_allocator.allocate(1024);
+} // end of namespace resource
+} // end of namespace umpire
 
-  double_allocator.deallocate(my_doubles, 1024);
-
-  std::vector< double, umpire::TypedAllocator<double> >
-    my_vector(double_allocator);
-
-  my_vector.resize(100);
-
-  return 0;
-}
+#endif // UMPIRE_HipPinnedMemoryResourceFactory_HPP

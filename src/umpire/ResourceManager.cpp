@@ -27,9 +27,10 @@
 #include "umpire/resource/CudaConstantMemoryResourceFactory.hpp"
 #endif
 
-#if defined(UMPIRE_ENABLE_ROCM)
-#include "umpire/resource/RocmDeviceResourceFactory.hpp"
-#include "umpire/resource/RocmPinnedMemoryResourceFactory.hpp"
+#if defined(UMPIRE_ENABLE_HIP)
+#include "umpire/resource/HipDeviceResourceFactory.hpp"
+#include "umpire/resource/HipPinnedMemoryResourceFactory.hpp"
+#include "umpire/resource/HipConstantMemoryResourceFactory.hpp"
 #endif
 
 #include "umpire/op/MemoryOperationRegistry.hpp"
@@ -85,12 +86,15 @@ ResourceManager::ResourceManager() :
     std::make_shared<resource::CudaConstantMemoryResourceFactory>());
 #endif
 
-#if defined(UMPIRE_ENABLE_ROCM)
+#if defined(UMPIRE_ENABLE_HIP)
   registry.registerMemoryResource(
-    std::make_shared<resource::RocmDeviceResourceFactory>());
+    std::make_shared<resource::HipDeviceResourceFactory>());
 
   registry.registerMemoryResource(
-    std::make_shared<resource::RocmPinnedMemoryResourceFactory>());
+    std::make_shared<resource::HipPinnedMemoryResourceFactory>());
+
+  registry.registerMemoryResource(
+    std::make_shared<resource::HipConstantMemoryResourceFactory>());
 #endif
 
   initialize();
@@ -118,7 +122,7 @@ ResourceManager::initialize()
   m_memory_resources[resource::Unified] = registry.makeMemoryResource("UM", getNextId());
 #endif
 
-#if defined(UMPIRE_ENABLE_CUDA)
+#if defined(UMPIRE_ENABLE_CUDA) || defined(UMPIRE_ENABLE_HIP)
   m_memory_resources[resource::Constant] = registry.makeMemoryResource("DEVICE_CONST", getNextId());
 #endif
 
@@ -149,7 +153,7 @@ ResourceManager::initialize()
   m_allocators_by_id[um_allocator->getId()] = um_allocator;
 #endif
 
-#if defined(UMPIRE_ENABLE_CUDA)
+#if defined(UMPIRE_ENABLE_CUDA) || defined(UMPIRE_ENABLE_HIP)
   auto device_const_allocator = m_memory_resources[resource::Constant];
   m_allocators_by_name["DEVICE_CONST"] = device_const_allocator;
   m_allocators_by_id[device_const_allocator->getId()] = device_const_allocator;

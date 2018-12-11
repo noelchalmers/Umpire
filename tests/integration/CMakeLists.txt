@@ -21,6 +21,12 @@ if (ENABLE_CUDA)
     cuda_runtime)
 endif ()
 
+if (ENABLE_HIP)
+  set (allocator_integration_tests_depends
+    ${allocator_integration_tests_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME allocator_integration_tests
   SOURCES allocator_integration_tests.cpp
@@ -36,13 +42,19 @@ blt_add_test(
   NAME allocator_integration_tests
   COMMAND allocator_integration_tests)
 
-set (strategy_test_depends 
+set (strategy_test_depends
   umpire gtest)
 
 if (ENABLE_OPENMP)
   set (strategy_test_depends
     ${strategy_test_depends}
     openmp)
+endif ()
+
+if (ENABLE_HIP)
+  set (strategy_test_depends
+    ${strategy_test_depends}
+    hip)
 endif ()
 
 blt_add_executable(
@@ -60,10 +72,19 @@ blt_add_test(
   NAME strategy_tests
   COMMAND strategy_tests)
 
+set (operation_tests_depends
+  umpire gtest)
+
+if (ENABLE_HIP)
+  set (operation_tests_depends
+    ${operation_tests_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME operation_tests
   SOURCES operation_tests.cpp
-  DEPENDS_ON umpire gtest
+  DEPENDS_ON ${operation_tests_depends}
   OUTPUT_DIR ${UMPIRE_TEST_OUTPUT_DIR})
 
 target_include_directories(
@@ -75,10 +96,19 @@ blt_add_test(
   NAME operation_tests
   COMMAND operation_tests)
 
+set (free_functions_integration_depends
+  umpire gtest)
+
+if (ENABLE_HIP)
+  set (free_functions_integration_depends
+    ${free_functions_integration_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME free_functions_integration_tests
   SOURCES free_functions_integration_tests.cpp
-  DEPENDS_ON umpire gtest
+  DEPENDS_ON ${free_functions_integration_depends}
   OUTPUT_DIR ${UMPIRE_TEST_OUTPUT_DIR})
 
 target_include_directories(
@@ -95,12 +125,12 @@ blt_add_test(
 #   SOURCES memory_resource_traits_tests.cpp
 #   DEPENDS_ON umpire gtest
 #   OUTPUT_DIR ${UMPIRE_TEST_OUTPUT_DIR})
-# 
+#
 # target_include_directories(
 #   memory_resource_traits_tests
 #   PRIVATE
 #   ${PROJECT_BINARY_DIR}/include)
-# 
+#
 # blt_add_test(
 #   NAME memory_resource_traits_tests
 #   COMMAND memory_resource_traits_tests)

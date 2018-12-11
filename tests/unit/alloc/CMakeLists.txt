@@ -21,6 +21,12 @@ if (ENABLE_CUDA)
     cuda_runtime)
 endif ()
 
+if (ENABLE_HIP)
+  set (memory_allocator_tests_depends
+    ${memory_allocator_tests_depends}
+    hip)
+endif ()
+
 blt_add_executable(
   NAME memory_allocator_tests
   SOURCES memory_allocator_tests.cpp

@@ -34,9 +34,12 @@
 #include "umpire/op/CudaAdviseReadMostlyOperation.hpp"
 #endif
 
-#if defined(UMPIRE_ENABLE_ROCM)
-#include "umpire/op/RocmCopyOperation.hpp"
-#include "umpire/op/RocmMemsetOperation.hpp"
+#if defined(UMPIRE_ENABLE_HIP)
+#include "umpire/op/HipCopyFromOperation.hpp"
+#include "umpire/op/HipCopyToOperation.hpp"
+#include "umpire/op/HipCopyOperation.hpp"
+
+#include "umpire/op/HipMemsetOperation.hpp"
 #endif
 
 #include "umpire/util/Macros.hpp"
@@ -123,31 +126,32 @@ MemoryOperationRegistry::MemoryOperationRegistry() noexcept
 
 #endif
 
-#if defined(UMPIRE_ENABLE_ROCM)
+#if defined(UMPIRE_ENABLE_HIP)
   registerOperation(
       "COPY",
-      std::make_pair(Platform::rocm, Platform::cpu),
-      std::make_shared<RocmCopyOperation>());
+      std::make_pair(Platform::cpu, Platform::hip),
+      std::make_shared<HipCopyToOperation>());
 
   registerOperation(
       "COPY",
-      std::make_pair(Platform::cpu, Platform::rocm),
-      std::make_shared<RocmCopyOperation>());
+      std::make_pair(Platform::hip, Platform::cpu),
+      std::make_shared<HipCopyFromOperation>());
 
   registerOperation(
       "COPY",
-      std::make_pair(Platform::rocm, Platform::rocm),
-      std::make_shared<RocmCopyOperation>());
+      std::make_pair(Platform::hip, Platform::hip),
+      std::make_shared<HipCopyOperation>());
 
   registerOperation(
       "MEMSET",
-      std::make_pair(Platform::rocm, Platform::rocm),
-      std::make_shared<RocmMemsetOperation>());
+      std::make_pair(Platform::hip, Platform::hip),
+      std::make_shared<HipMemsetOperation>());
 
   registerOperation(
       "REALLOCATE",
-      std::make_pair(Platform::rocm, Platform::rocm),
+      std::make_pair(Platform::hip, Platform::hip),
       std::make_shared<GenericReallocateOperation>());
+
 #endif
 }
 

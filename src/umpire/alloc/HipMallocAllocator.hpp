@@ -12,46 +12,41 @@
 // For details, see https://github.com/LLNL/Umpire
 // Please also see the LICENSE file for MIT license.
 //////////////////////////////////////////////////////////////////////////////
-#ifndef UMPIRE_AmPinnedAllocator_HPP
-#define UMPIRE_AmPinnedAllocator_HPP
+#ifndef UMPIRE_HipMallocAllocator_HPP
+#define UMPIRE_HipMallocAllocator_HPP
 
-#include <hc_am.hpp>
+#include <hip/hip_runtime.h>
 
 namespace umpire {
 namespace alloc {
 
 /*!
- * \brief Uses hcAlloc and hcAlloc to allocate and deallocate memory on
- *        AMD GPUs that support ROCm.
+ * \brief Uses hipMalloc and hipFree to allocate and deallocate memory on
+ *        AMD GPUs.
  */
-struct AmPinnedAllocator {
+struct HipMallocAllocator {
   /*!
-   * \brief Allocate bytes of pinned memory using am_alloc
+   * \brief Allocate bytes of memory using hipMalloc
    *
    * \param bytes Number of bytes to allocate.
    * \return Pointer to start of the allocation.
    *
    * \throws umpire::util::Exception if memory cannot be allocated.
    */
-  void* allocate(size_t bytes)
+  void* allocate(size_t size)
   {
-    /* Default accelerator */
-    hc::accelerator acc;
-    void* ret = hc::am_alloc(bytes, acc, amHostPinned);
-
-    UMPIRE_LOG(Debug, "(size=" << bytes << ") returning " << ret);
-
-    if  (ret == nullptr) {
-      UMPIRE_ERROR("hc::am_alloc(bytes = " << bytes
-          << ", acc=" << 0
-          << ", hc::amHostPinned) failed");
+    void* ptr = nullptr;
+    hipError_t error = ::hipMalloc(&ptr, size);
+    UMPIRE_LOG(Debug, "(bytes=" << size << ") returning " << ptr);
+    if (error != hipSuccess) {
+      UMPIRE_ERROR("hipMalloc( bytes = " << size << " ) failed with error: " << hipGetErrorString(error));
     } else {
-      return ret;
+      return ptr;
     }
   }
 
   /*!
-   * \brief Deallocate memory using am_free.
+   * \brief Deallocate memory using hipFree.
    *
    * \param ptr Address to deallocate.
    *
@@ -60,11 +55,14 @@ struct AmPinnedAllocator {
   void deallocate(void* ptr)
   {
     UMPIRE_LOG(Debug, "(ptr=" << ptr << ")");
-    auto status = hc::am_free(ptr);
+    hipError_t error = ::hipFree(ptr);
+    if (error != hipSuccess) {
+      UMPIRE_ERROR("hipFree( ptr = " << ptr << " ) failed with error: " << hipGetErrorString(error));
+    }
   }
 };
 
 } // end of namespace alloc
 } // end of namespace umpire
 
-#endif // UMPIRE_AmPinnedAllocator_HPP
+#endif // UMPIRE_HipMallocAllocator_HPP
