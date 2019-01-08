@@ -23,7 +23,7 @@ set (umpire_strategy_headers
   DynamicPool.hpp
   FixedPool.hpp
   FixedPool.inl)
-  
+
 set (umpire_strategy_mixin_headers
   mixins/Inspector.hpp)
 
@@ -44,7 +44,7 @@ set (umpire_strategy_depends
   umpire_tpl_simpool)
 
 blt_add_library(
-  NAME umpire_strategy 
+  NAME umpire_strategy
   HEADERS ${umpire_strategy_headers} ${umpire_strategy_mixin_headers}
   SOURCES ${umpire_stategy_sources}
   HEADERS_OUTPUT_SUBDIR umpire/strategy

@@ -12,6 +12,9 @@
 // For details, see https://github.com/LLNL/Umpire
 // Please also see the LICENSE file for MIT license.
 //////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2018,2019 Advanced Micro Devices, Inc.
+//////////////////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -315,6 +318,10 @@ BENCHMARK_REGISTER_F(Device, allocate)->Range(RangeLow, RangeHi);
 BENCHMARK_REGISTER_F(Device, deallocate)->Range(RangeLow, RangeHi);
 //BENCHMARK_REGISTER_F(PoolDevice, allocate)->Range(RangeLow, RangeHi);
 //BENCHMARK_REGISTER_F(PoolDevice, deallocate)->Range(RangeLow, RangeHi);
+
+BENCHMARK_REGISTER_F(Device, largeAllocDealloc)->Arg(1)->Arg(2)->Arg(4)->Arg(8)->Arg(9)->Arg(10)->Arg(11)->Arg(12)->Arg(13);
+BENCHMARK_REGISTER_F(PoolDevice, coalesceBench)->Arg(0);
+
 // NOTE: always allocates 8mb, ignores size argument
 #if DOESNT_WORK_YET
 BENCHMARK_REGISTER_F(FixedPoolDevice, allocate)->Arg(RangeLow);

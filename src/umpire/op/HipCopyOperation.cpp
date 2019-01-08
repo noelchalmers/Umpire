@@ -12,6 +12,9 @@
 // For details, see https://github.com/LLNL/Umpire
 // Please also see the LICENSE file for MIT license.
 //////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2018,2019 Advanced Micro Devices, Inc.
+//////////////////////////////////////////////////////////////////////////////
 #include "umpire/op/HipCopyOperation.hpp"
 
 #include <hip/hip_runtime.h>
@@ -28,14 +31,14 @@ void HipCopyOperation::transform(
     umpire::util::AllocationRecord* UMPIRE_UNUSED_ARG(dst_allocation),
     size_t length)
 {
-  hipError_t error = 
+  hipError_t error =
     ::hipMemcpy(*dst_ptr, src_ptr, length, hipMemcpyDeviceToDevice);
 
   if (error != hipSuccess) {
     UMPIRE_ERROR("hipMemcpy( dest_ptr = " << *dst_ptr
       << ", src_ptr = " << src_ptr
       << ", length = " << length
-      << ", hipMemcpyDeviceToDevice ) failed with error: " 
+      << ", hipMemcpyDeviceToDevice ) failed with error: "
       << hipGetErrorString(error));
   }
 

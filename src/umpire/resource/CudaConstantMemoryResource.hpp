@@ -22,7 +22,6 @@
 
 #include <cuda_runtime_api.h>
 
-#warning "TEST2"
 __constant__ char umpire_internal_device_constant_memory[64*1024];
 
 namespace umpire {

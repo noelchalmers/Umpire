@@ -12,6 +12,10 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+###############################################################################
+# Copyright (c) 2018,2019 Advanced Micro Devices, Inc.
+###############################################################################
+
 set (stress_test_depends umpire)
 set (benchmark_depends umpire gbenchmark)
 

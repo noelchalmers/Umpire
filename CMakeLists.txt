@@ -12,6 +12,9 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+###############################################################################
+# Copyright (c) 2018,2019 Advanced Micro Devices, Inc.
+###############################################################################
 
 cmake_policy(SET CMP0025 NEW)
 cmake_policy(SET CMP0048 NEW)
@@ -46,6 +49,11 @@ if (ENABLE_CUDA)
 else ()
   cmake_minimum_required(VERSION 3.8.2)
 endif ()
+
+if (ENABLE_HIP)
+  #bug in ROCm 2.0 is incorrectly warning about missing overrides
+  set(HIP_HIPCC_FLAGS "${HIP_HIPCC_FLAGS} -Wno-inconsistent-missing-override")
+endif()
 
 message(STATUS "Using CMake version ${CMAKE_VERSION}")
 

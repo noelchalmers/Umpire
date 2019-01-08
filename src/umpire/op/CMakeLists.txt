@@ -12,6 +12,10 @@
 # For details, see https://github.com/LLNL/Umpire
 # Please also see the LICENSE file for MIT license.
 ##############################################################################
+###############################################################################
+# Copyright (c) 2018,2019 Advanced Micro Devices, Inc.
+###############################################################################
+
 set (umpire_op_headers
   GenericReallocateOperation.hpp
   HostCopyOperation.hpp
