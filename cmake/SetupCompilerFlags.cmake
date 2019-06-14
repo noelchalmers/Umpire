@@ -19,5 +19,5 @@ if (ENABLE_COVERAGE)
 endif ()
 
 if (ENABLE_HIP)
-	set(HIP_HIPCC_FLAGS "${HIP_HIPCC_FLAGS} -Wno-inconsistent-missing-override")
+	# set(HIP_HIPCC_FLAGS "${HIP_HIPCC_FLAGS} -Wno-inconsistent-missing-override")
 endif()
